@@ -277,7 +277,7 @@ def get_confusables():
                         '\U0001D486', '\U0001D4EE', '\U0001D522', '\U0001D556', '\U0001D58A', '\U0001D5BE',
                         '\U0001D5F2', '\U0001D626', '\U0001D65A', '\U0001D68E', '\U0000AB32', '\U00000435',
                         '\U000004BD',
-                        '\U0000011B', '\U00000115', '\U00000247', '\U000004BF']
+                        '\U0000011B', '\U00000115', '\U00000247', '\U000004BF', '\U000000E9']
 
     confusables['f'] = ['\U0001D41F', '\U0001D453', '\U0001D487', '\U0001D4BB', '\U0001D4EF', '\U0001D523',
                         '\U0001D557', '\U0001D58B', '\U0001D5BF', '\U0001D5F3', '\U0001D627', '\U0001D65B',
@@ -474,21 +474,30 @@ def get_homograph(input):
     return output
 
 
+def expand(homograph, reverse_confusables, current, results):
+    if len(homograph) == 0:
+        results.add(current)
+    else:
+        if ord(homograph[0]) in reverse_confusables:
+            for j in reverse_confusables[ord(homograph[0])]:
+                expand(homograph[1:], reverse_confusables, current+j,results)
+        else:
+            expand(homograph[1:], reverse_confusables, current + homograph[0], results)
+
+
 def convert_to_ascii(homograph):
     confusables = get_confusables()
     reverse_confusables = {}
     for i in confusables:
         for j in confusables[i]:
-            reverse_confusables[ord(j)] = i
+            if ord(j) not in reverse_confusables:
+                reverse_confusables[ord(j)] = set()
 
-    result = ''
+            reverse_confusables[ord(j)].add(i)
 
-    for i in homograph:
-        if ord(i) in reverse_confusables:
-            result += reverse_confusables[ord(i)]
-        else:
-            result += i
-    return result
+    results = set()
+    expand(homograph, reverse_confusables, '', results)
+    return results
 
 
 def generate_table():
