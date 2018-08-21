@@ -474,18 +474,20 @@ def get_homograph(input):
     return output
 
 
-def expand(homograph, reverse_confusables, current, results):
+def expand(homograph, reverse_confusables, current, results, ignore_case=True):
     if len(homograph) == 0:
+        if ignore_case is True:
+            current = current.lower()
         results.add(current)
     else:
         if ord(homograph[0]) in reverse_confusables:
             for j in reverse_confusables[ord(homograph[0])]:
-                expand(homograph[1:], reverse_confusables, current+j,results)
+                expand(homograph[1:], reverse_confusables, current + j, results, ignore_case)
         else:
-            expand(homograph[1:], reverse_confusables, current + homograph[0], results)
+            expand(homograph[1:], reverse_confusables, current + homograph[0], results, ignore_case)
 
 
-def convert_to_ascii(homograph):
+def convert_to_ascii(homograph, ignore_case=True):
     confusables = get_confusables()
     reverse_confusables = {}
     for i in confusables:
@@ -493,10 +495,14 @@ def convert_to_ascii(homograph):
             if ord(j) not in reverse_confusables:
                 reverse_confusables[ord(j)] = set()
 
+            if ord(j) < 128:
+                reverse_confusables[ord(j)].add(j)
+            if ignore_case is True:
+                i = i.lower()
             reverse_confusables[ord(j)].add(i)
 
     results = set()
-    expand(homograph, reverse_confusables, '', results)
+    expand(homograph, reverse_confusables, '', results, ignore_case)
     return results
 
 
