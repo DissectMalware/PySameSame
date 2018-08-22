@@ -19,7 +19,7 @@ ascii_reprs = english_confusables.convert_to_ascii("𝐈𝟎𝐈𝔅١𝔑S",ign
 mappings = english_confusables.generate_table()
 ```
 
-4. manually select a Unicode homoglyph for ASCII characters and use the mapping to transform a test using a [web interface](https://github.com/DissectMalware/PySameSame/blob/master/mappings.html). 
+4. manually select a Unicode homoglyph for each English Alphabet and use the resulted mapping to transform a text using a [web interface](https://github.com/DissectMalware/PySameSame/blob/master/mappings.html). 
 
 
 
